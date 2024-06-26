@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,7 +32,8 @@ public class PostController {
 	private PostService postService;
 	
 	@PostMapping("/user/{userId}/category/{categoryId}/add")
-	@PreAuthorize("hasAuthority('USER')")
+//	@PreAuthorize("hasAuthority('USER')")
+	@Secured({"ADMIN","USER"})
 	public ResponseEntity<PostDto> createPost(@Valid @RequestBody PostDto postDto,@PathVariable Integer userId,@PathVariable Integer categoryId){
 		PostDto newPostDto=postService.createPost(postDto, userId, categoryId);
 		return new ResponseEntity<PostDto>(newPostDto,HttpStatus.CREATED);
@@ -53,7 +55,7 @@ public class PostController {
 	}
 	
 	@GetMapping("/list")
-	@PreAuthorize("hasAuthority('USER','ADMIN')")
+	@Secured({"ADMIN","USER"})
 	public ResponseEntity<PostResponse> viewPosts(@RequestParam(value="pageNumber",defaultValue = AppConstant.PAGE_NUMBER , required=false)
 													Integer pageNumber,
 													@RequestParam(value="pageSize",defaultValue=AppConstant.PAGE_SIZE,required = false)
@@ -67,7 +69,7 @@ public class PostController {
 		
 	}
 	
-	@GetMapping("/search/{postId}")
+	@GetMapping("/search/post/{postId}")
 	@PreAuthorize("hasAuthority('USER')")
 	public ResponseEntity<PostDto> searchPostById(@PathVariable Integer postId){
 		PostDto postDto=postService.getPostById(postId);
@@ -76,7 +78,7 @@ public class PostController {
 	}
 	
 	@GetMapping("/search/category/{categoryId}")
-	@PreAuthorize("hasAuthority('USER','ADMIN')")
+	@Secured({"ADMIN","USER"})
 	public ResponseEntity<PostResponse> getPostByCategory(@PathVariable Integer categoryId,
 														@RequestParam(value="pageNumber",defaultValue=AppConstant.PAGE_NUMBER,required=false)
 														Integer pageNumber,
@@ -87,7 +89,7 @@ public class PostController {
 	}
 	
 	@GetMapping("/search/user/{userId}")
-	@PreAuthorize("hasAuthority('USER')")
+	@Secured({"ADMIN","USER"})
 	public ResponseEntity<PostResponse> getPostByUser(@PathVariable Integer userId,
 														@RequestParam(value="pageNumber",defaultValue=AppConstant.PAGE_NUMBER,required=false)
 														Integer pageNumber,
@@ -98,7 +100,7 @@ public class PostController {
 	}
 	
 	@GetMapping("/search/{keyword}")
-	@PreAuthorize("hasAuthority('USER')")
+	@Secured({"ADMIN","USER"})
 	public ResponseEntity<List<PostDto>> searchByKeyword(@PathVariable String keyword){
 		List<PostDto> searchedPost=postService.searchPosts(keyword);
 		return new ResponseEntity<List<PostDto>>(searchedPost,HttpStatus.OK);

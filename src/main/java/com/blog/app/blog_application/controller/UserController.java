@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,7 +36,7 @@ public class UserController {
 	}
 
 	@PutMapping("/edit/{userId}")
-	@PreAuthorize("hasAuthority('USER')")
+	@PreAuthorize("hasAuthority('ADMIN')")
 	public ResponseEntity<UserDto> updateUser(@Valid @RequestBody UserDto userDto,
 			@PathVariable("userId") Integer userId) {
 		UserDto updatedUser = userService.updateUser(userDto, userId);
@@ -60,7 +61,7 @@ public class UserController {
 	}
 
 	@GetMapping("/search/{userId}")
-	@PreAuthorize("hasAnyAuthority('USER','ADMIN')")
+	@Secured({"ADMIN","USER"})
 	public ResponseEntity<UserDto> getSingleUser(@PathVariable Integer userId) {
 		UserDto user = userService.getUserById(userId);
 		return new ResponseEntity<UserDto>(user, HttpStatus.OK);

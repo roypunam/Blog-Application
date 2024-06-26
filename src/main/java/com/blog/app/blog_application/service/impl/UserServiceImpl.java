@@ -13,6 +13,8 @@ import com.blog.app.blog_application.payloads.UserDto;
 import com.blog.app.blog_application.repository.UserRepo;
 import com.blog.app.blog_application.service.UserService;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -71,7 +73,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public void deleteUser(Integer userId) {
 		User user = userRepo.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
-		userRepo.delete(user);
+		userRepo.delete(user);;
 	}
 
 }

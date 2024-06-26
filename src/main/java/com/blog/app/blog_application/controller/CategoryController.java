@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,14 +30,14 @@ public class CategoryController {
 	private CategoryService categoryService;
 
 	@PostMapping("/add")
-	@PreAuthorize("hasAuthority('USER','ADMIN')")
+	@PreAuthorize("hasAuthority('ADMIN')")
 	public ResponseEntity<CategoryDto> addCategory(@Valid @RequestBody CategoryDto categoryDto) {
 		CategoryDto createCategoryDto = categoryService.createCategory(categoryDto);
 		return new ResponseEntity<CategoryDto>(createCategoryDto, HttpStatus.CREATED);
 	}
 
 	@PutMapping("/edit/{categoryId}")
-	@PreAuthorize("hasAuthority('USER','ADMIN')")
+	@PreAuthorize("hasAuthority('ADMIN')")
 	public ResponseEntity<CategoryDto> EditCategory(@Valid @RequestBody CategoryDto categoryDto,
 			@PathVariable Integer categoryId) {
 		CategoryDto updateCategoryDto = categoryService.updateCategory(categoryDto, categoryId);
@@ -44,21 +45,21 @@ public class CategoryController {
 	}
 
 	@DeleteMapping("/{categoryId}/delete")
-	@PreAuthorize("hasAuthority('USER','ADMIN')")
+	@PreAuthorize("hasAuthority('ADMIN')")
 	public ResponseEntity<ApiResponse> deleteCategory(@PathVariable Integer categoryId) {
 		categoryService.deleteCategory(categoryId);
 		return new ResponseEntity<ApiResponse>(new ApiResponse("Category deleted successfully", true), HttpStatus.OK);
 	}
 
 	@GetMapping("/search/{categoryId}")
-	@PreAuthorize("hasAuthority('USER','ADMIN')")
+	@PreAuthorize("hasAuthority('ADMIN')")
 	public ResponseEntity<CategoryDto> searchCategory(@PathVariable Integer categoryId) {
 		CategoryDto getCategoryDto = categoryService.getCategory(categoryId);
 		return new ResponseEntity<CategoryDto>(getCategoryDto, HttpStatus.OK);
 	}
 
 	@GetMapping("/categories")
-	@PreAuthorize("hasAuthority('USER','ADMIN')")
+	@Secured({"ADMIN","USER"})
 	public ResponseEntity<List<CategoryDto>> categoryList() {
 		List<CategoryDto> categoriesDto = categoryService.getCategories();
 		return new ResponseEntity<List<CategoryDto>>(categoriesDto, HttpStatus.OK);
